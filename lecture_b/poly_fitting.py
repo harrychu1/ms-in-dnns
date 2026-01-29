@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
 ##Part a)
 
 # Generate 15 training data points and 10 test data points
@@ -8,11 +7,13 @@ x = np.random.uniform(0, 2 * np.pi, 25)
 y = np.sin(x) + np.random.normal(0, 0.1, 25)
 I=np.linspace(0, 2*np.pi, 1000)
 
+##Part b)
+
 #Split the data
 train_data=[x[:15], y[:15]]
 test_data=[x[15:], y[15:]]
 
-#Least squares method
+#Regression
 def fit_poly(x_train, y_train, k):
     X = np.ones(len(x_train))
     for i in range(1,k+1):
@@ -21,18 +22,20 @@ def fit_poly(x_train, y_train, k):
     W = y_train.T@X@np.linalg.inv(X.T@X)
     return W
 
-
+#Assembles design matrix
 def design_matrix(data, k):
     X=np.ones(len(data))
     for i in range(1,k+1):
         X=np.vstack((X,data**i))
     return X
 
+#Polynomial function
 def poly(x,W):
     W=W.flatten()
     X=design_matrix(x,len(W)-1)
     return W@X
 
+#MSE
 def mse_poly(x, y, W):
     W=W.flatten()
     X=design_matrix(x, len(W)-1)
@@ -44,12 +47,13 @@ W=fit_poly(train_data[0],train_data[1],degree)
 X=design_matrix(I,degree)
 MSE= mse_poly(test_data[0], test_data[1], W)
 
-## Overfitting
-x1 = np.random.uniform(0, 4 * np.pi, 25)
-y1 = np.sin(x1) + np.random.normal(0, 0.1, 25)
+## Part c)
+x1 = np.random.uniform(0, 4 * np.pi, 2500)
+y1 = np.sin(x1) + np.random.normal(0, 0.1, 2500)
 
-train_data1=[x1[:15], y1[:15]]
-test_data1=[x1[15:], y1[15:]]
+#New Data
+train_data1=[x1[:1500], y1[:1500]]
+test_data1=[x1[1500:], y1[1500:]]
 MSE_vec = np.zeros(15)
 
 I1=np.linspace(0, 4*np.pi, 1000)
@@ -61,6 +65,7 @@ for k in range(1,16):
 
 X1=design_matrix(I1,5)
 
+## Part d)
 def ridge_fit_poly(x_train, y_train, k, lamb):
     X=design_matrix(x_train, k)
     X=X.T
@@ -74,6 +79,7 @@ for i, k in enumerate(list(range(1,21))):
         W_r = ridge_fit_poly(train_data1[0], train_data1[1], k, lamb)
         MSE_mat[i,j] = mse_poly(test_data1[0], test_data1[1], W_r)
 
+## Part e)
 def perform_cv(x, y, k, lamb, folds):
     N=len(x)
     batch_sz = int(N/folds)
@@ -109,39 +115,46 @@ for cv_iterations in range(100):
     res.append(MSE_cv)
 
 res=np.array(res)
-#res.flatten()
-#res.reshape((len(divisors),100))
 
 
 def main():
     plt.scatter(train_data[0], train_data[1], label="train_data")
     plt.scatter(test_data[0], test_data[1], label="test_data")
-    plt.plot(I, W@X)
-    plt.plot(I, np.sin(I))
+    plt.plot(I, W@X, label="fitted polynomial")
+    plt.plot(I, np.sin(I), color="black")
     plt.plot([], [], label=f"MSE: {round(MSE,2)}")
     plt.legend()
+    plt.title("Degree 3 fit")
     plt.show()
 
     plt.plot(range(1,16), MSE_vec)
     plt.yscale('log')
+    plt.xlabel("k")
+    plt.ylabel("MSE")
+    plt.title("MSE for different degrees of polynomial fit")
     plt.show()
 
     plt.scatter(train_data1[0], train_data1[1], label="train_data")
     plt.scatter(test_data1[0], test_data1[1], label="test_data")
-    plt.plot(I1, W5@X1)
-    plt.plot(I1, np.sin(I1))
+    plt.plot(I1, W5@X1, label="fitted polynomial")
+    plt.plot(I1, np.sin(I1), color="black")
     plt.legend()
+    plt.title("Degree 5 fit (best fit)")
     plt.show()
 
     plt.imshow(np.log(MSE_mat.T))
-    plt.xlabel("k")
-    plt.ylabel("lambda")
+    plt.xlabel("k index")
+    plt.ylabel("lambda index")
+    plt.title("Heat map of MSE for grid search")
     plt.show()
     
-    plt.plot(divisors, np.mean(res, axis=0))
+    plt.plot(divisors, np.mean(res, axis=0), label="average of 100 iterations")
     plt.plot(divisors, np.mean(res, axis=0)+np.std(res, axis=0), linestyle="dashed")
     plt.plot(divisors, np.maximum(np.zeros(len(divisors)), np.mean(res, axis=0)-np.std(res, axis=0)), linestyle="dashed")
-    
+    plt.xlabel("nr of folds")
+    plt.ylabel("MSE")
+    plt.legend()
+    plt.title("Cross validation for different nr of folds")
     plt.show()
 
 if __name__ == "__main__":
