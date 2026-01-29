@@ -8,9 +8,9 @@ import json
 from google.cloud import aiplatform, storage
 from google.oauth2 import service_account
 
-PROJECT = "x"
+PROJECT = "637096924841"
 REGION = "europe-west4"
-BUCKET = "gs://msindnn-assignments_bucket"
+BUCKET = "gs://bucket-1090"
 EXPERIMENT = "msdnn-assignments"
 EXP_DESCRIPTION = "Assignments for MS in DNNs lecture"
 WANDB_KEY = json.load(open("wandb_key.json"))
