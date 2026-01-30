@@ -48,12 +48,12 @@ X=design_matrix(I,degree)
 MSE= mse_poly(test_data[0], test_data[1], W)
 
 ## Part c)
-x1 = np.random.uniform(0, 4 * np.pi, 2500)
-y1 = np.sin(x1) + np.random.normal(0, 0.1, 2500)
+x1 = np.random.uniform(0, 4 * np.pi, 25)
+y1 = np.sin(x1) + np.random.normal(0, 0.1, 25)
 
 #New Data
-train_data1=[x1[:1500], y1[:1500]]
-test_data1=[x1[1500:], y1[1500:]]
+train_data1=[x1[:15], y1[:15]]
+test_data1=[x1[15:], y1[15:]]
 MSE_vec = np.zeros(15)
 
 I1=np.linspace(0, 4*np.pi, 1000)
@@ -118,43 +118,42 @@ res=np.array(res)
 
 
 def main():
-    plt.scatter(train_data[0], train_data[1], label="train_data")
-    plt.scatter(test_data[0], test_data[1], label="test_data")
-    plt.plot(I, W@X, label="fitted polynomial")
-    plt.plot(I, np.sin(I), color="black")
-    plt.plot([], [], label=f"MSE: {round(MSE,2)}")
-    plt.legend()
-    plt.title("Degree 3 fit")
-    plt.show()
+    fig, ax = plt.subplots(2,3, figsize=(12,8))
+    fig.subplots_adjust(hspace=0.4, wspace=0.5)
 
-    plt.plot(range(1,16), MSE_vec)
-    plt.yscale('log')
-    plt.xlabel("k")
-    plt.ylabel("MSE")
-    plt.title("MSE for different degrees of polynomial fit")
-    plt.show()
+    ax[0,0].scatter(train_data[0], train_data[1], label="train_data")
+    ax[0,0].scatter(test_data[0], test_data[1], label="test_data")
+    ax[0,0].plot(I, W@X, label="fitted polynomial")
+    ax[0,0].plot(I, np.sin(I), color="black")
+    ax[0,0].plot([], [], label=f"MSE: {round(MSE,2)}", color="white")
+    ax[0,0].legend(loc="upper right", fontsize=8)
+    ax[0,0].set_title("Degree 3 fit")
 
-    plt.scatter(train_data1[0], train_data1[1], label="train_data")
-    plt.scatter(test_data1[0], test_data1[1], label="test_data")
-    plt.plot(I1, W5@X1, label="fitted polynomial")
-    plt.plot(I1, np.sin(I1), color="black")
-    plt.legend()
-    plt.title("Degree 5 fit (best fit)")
-    plt.show()
-
-    plt.imshow(np.log(MSE_mat.T))
-    plt.xlabel("k index")
-    plt.ylabel("lambda index")
-    plt.title("Heat map of MSE for grid search")
-    plt.show()
+    ax[0,1].plot(range(1,16), MSE_vec)
+    ax[0,1].set_yscale('log')
+    ax[0,1].set_xlabel("k")
+    ax[0,1].set_ylabel("MSE")
+    ax[0,1].set_title("MSE for different degrees of polynomial fit")
     
-    plt.plot(divisors, np.mean(res, axis=0), label="average of 100 iterations")
-    plt.plot(divisors, np.mean(res, axis=0)+np.std(res, axis=0), linestyle="dashed")
-    plt.plot(divisors, np.maximum(np.zeros(len(divisors)), np.mean(res, axis=0)-np.std(res, axis=0)), linestyle="dashed")
-    plt.xlabel("nr of folds")
-    plt.ylabel("MSE")
-    plt.legend()
-    plt.title("Cross validation for different nr of folds")
+    ax[0,2].scatter(train_data1[0], train_data1[1], label="train_data")
+    ax[0,2].scatter(test_data1[0], test_data1[1], label="test_data")
+    ax[0,2].plot(I1, W5@X1, label="fitted polynomial")
+    ax[0,2].plot(I1, np.sin(I1), color="black")
+    ax[0,2].legend(fontsize=8)
+    ax[0,2].set_title("Degree 5 fit (best fit)")
+
+    ax[1,0].imshow(np.log(MSE_mat.T))
+    ax[1,0].set_xlabel("k index")
+    ax[1,0].set_ylabel("lambda index")
+    ax[1,0].set_title("Heat map of MSE for grid search")
+    
+    ax[1,1].plot(divisors, np.mean(res, axis=0), label="average")
+    ax[1,1].plot(divisors, np.mean(res, axis=0)+np.std(res, axis=0), linestyle="dashed")
+    ax[1,1].plot(divisors, np.maximum(np.zeros(len(divisors)), np.mean(res, axis=0)-np.std(res, axis=0)), linestyle="dashed")
+    ax[1,1].set_xlabel("nr of folds")
+    ax[1,1].set_ylabel("MSE")
+    ax[1,1].legend(fontsize=8)
+    ax[1,1].set_title("Cross validation for different nr of folds")
     plt.show()
 
 if __name__ == "__main__":
