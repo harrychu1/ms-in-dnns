@@ -1,0 +1,21 @@
+1a:
+- Discuss what you find when changing the learning rate.
+    Ans: It seems like the gradient descent fails for too large learning rate (higher than 10^(-5)). Too low gives bad convergence.
+    100 steps seems to be too few iterations and the method does not converge. 
+
+1b:
+- You will see that it is not easy to solve this optimization problem using gradient descent.
+  Explain why. (Hint: Compute Hessian)
+    Ans: The Hessian is 2*X@X.T where X is the design matrix. Computing the condition number 
+    using built in methods in PyTorch gives 396989.8125. Since the condition number of the Hessian
+    is relatively high we have poor convergence of gradient descent. 
+
+- Final loss (Adam):
+    Ans: 0.60442715883255
+
+- Discuss your results (LBFGS)
+    Ans: Since it uses the Hessian it is a second order optimization method 
+    which behaves better when we have high condition number problems. The tradeoff
+    is that it requires higher computational power.
+
+2: No questions
