@@ -71,7 +71,8 @@ def main(args):
     torch.manual_seed(0xDEADBEEF)
 
     if "LOG_PATH" in os.environ:
-        data_file = pl.PurePosixPath("/gcs", "msindnn_staging", "adult_data", "adult.data")
+        bucket_name = os.environ["BUCKET"].split("gs://")[1]
+        data_file = pl.PurePosixPath("/gcs", bucket_name, "adult_data", "adult.data")
     else:
         data_file = pl.PurePath("..", "data", "adult_data", "adult.data")
 
@@ -153,7 +154,7 @@ if __name__ == "__main__":
     if "CREATION_TIMESTAMP" in os.environ:
         timestamp = os.environ["CREATION_TIMESTAMP"]
     else:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
     parser.add_argument("--run-name", type=str, default=timestamp)
     args = parser.parse_args()
     main(args)
